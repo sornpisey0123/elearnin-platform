@@ -145,6 +145,13 @@ public class Course extends BaseEntity {
     public void publish() {
         this.status = CourseStatus.PUBLISHED;
         this.publishedAt = Instant.now();
+        this.archivedAt = null;
+    }
+
+    /** Back to DRAFT; {@code publishedAt} is kept so the slug stays stable for a course that was once public. */
+    public void unpublish() {
+        this.status = CourseStatus.DRAFT;
+        this.archivedAt = null;
     }
 
     public void archive() {

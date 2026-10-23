@@ -62,7 +62,8 @@ public class SecurityConfig {
                                 "/api/courses/*/outline",
                                 "/api/courses/*/reviews").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/instructor/**").hasRole("INSTRUCTOR")
+                        // ADMIN bypasses course ownership, so it must reach instructor endpoints too
+                        .requestMatchers("/api/instructor/**").hasAnyRole("INSTRUCTOR", "ADMIN")
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(keycloakJwtConverter()))

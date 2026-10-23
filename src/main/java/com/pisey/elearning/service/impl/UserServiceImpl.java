@@ -18,6 +18,7 @@ import com.pisey.elearning.service.CurrentUserService;
 import com.pisey.elearning.service.FileStorageService;
 import com.pisey.elearning.service.KeycloakAdminService;
 import com.pisey.elearning.service.UserService;
+import com.pisey.elearning.utils.FileTransactionUtils;
 import com.pisey.elearning.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -25,8 +26,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -95,13 +94,7 @@ public class UserServiceImpl implements UserService {
         user.setAvatarUrl(newUrl);
         userRepository.saveAndFlush(user);
 
-        // Delete the old file only once the new URL is committed; on rollback remove the new file instead
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-            @Override
-            public void afterCompletion(int status) {
-                fileStorageService.delete(status == STATUS_COMMITTED ? oldUrl : newUrl);
-            }
-        });
+        FileTransactionUtils.replaceAfterCompletion(fileStorageService, oldUrl, newUrl);
         return userMapper.toProfileResponse(user);
     }
 
