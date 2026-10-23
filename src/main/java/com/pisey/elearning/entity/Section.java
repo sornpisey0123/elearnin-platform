@@ -37,7 +37,7 @@ import java.util.List;
                 columnNames = {"course_id", "sort_order"}
         )
 )
-public class Section extends BaseEntity {
+public class Section extends BaseEntity implements Ordered {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

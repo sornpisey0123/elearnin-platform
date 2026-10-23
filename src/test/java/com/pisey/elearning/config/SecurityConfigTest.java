@@ -110,6 +110,13 @@ class SecurityConfigTest {
     }
 
     @Test
+    void instructorPathLetsAdminThroughForOwnershipBypass() throws Exception {
+        mockMvc.perform(get("/api/instructor/courses")
+                        .with(jwt().jwt(j -> j.subject(SUB)).authorities(new SimpleGrantedAuthority("ROLE_ADMIN"))))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void publicCatalogueNeedsNoToken() throws Exception {
         mockMvc.perform(get("/api/courses"))
                 .andExpect(status().isNotFound());

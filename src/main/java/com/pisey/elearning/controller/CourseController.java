@@ -1,11 +1,13 @@
 package com.pisey.elearning.controller;
 
 import com.pisey.elearning.dto.common.PageResponse;
+import com.pisey.elearning.dto.content.CourseOutlineResponse;
 import com.pisey.elearning.dto.course.CourseDetailResponse;
 import com.pisey.elearning.dto.course.CourseSearchCriteria;
 import com.pisey.elearning.dto.course.CourseSearchCriteria.CourseSort;
 import com.pisey.elearning.dto.course.CourseSummaryResponse;
 import com.pisey.elearning.entity.enums.CourseLevel;
+import com.pisey.elearning.service.ContentService;
 import com.pisey.elearning.service.CourseService;
 import com.pisey.elearning.utils.SecurityUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,6 +34,7 @@ import java.math.BigDecimal;
 public class CourseController {
 
     private final CourseService courseService;
+    private final ContentService contentService;
 
     /** Paging is parsed here because {@code sort} is a named option, not Spring's {@code property,dir} syntax. */
     @GetMapping
@@ -48,6 +51,12 @@ public class CourseController {
             @RequestParam(defaultValue = "12") int size) {
         CourseSearchCriteria criteria = new CourseSearchCriteria(keyword, categoryId, level, minPrice, maxPrice);
         return courseService.search(criteria, CourseSort.from(sort), page, size);
+    }
+
+    @GetMapping("/{courseId}/outline")
+    @Operation(summary = "Sections and lessons in order (titles, types, durations; never lesson content)")
+    public CourseOutlineResponse outline(@PathVariable Long courseId) {
+        return contentService.getOutline(courseId, SecurityUtils.currentJwt().orElse(null));
     }
 
     @GetMapping("/{slug}")

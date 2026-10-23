@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -37,6 +38,11 @@ public interface CourseRepository extends JpaRepository<Course, Long>, JpaSpecif
 
     @EntityGraph(attributePaths = {"instructor", "category"})
     Optional<Course> findWithInstructorAndCategoryById(Long id);
+
+    /** Atomic counter bump in the enrolling transaction (no lost updates under concurrent enrollments). */
+    @Modifying
+    @Query("update Course c set c.enrollmentCount = c.enrollmentCount + 1 where c.id = :courseId")
+    void incrementEnrollmentCount(@Param("courseId") Long courseId);
 
     /** Always one row; zeros for a course without sections. */
     @Query("""

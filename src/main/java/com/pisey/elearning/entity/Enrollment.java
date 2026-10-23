@@ -89,4 +89,11 @@ public class Enrollment extends BaseEntity {
         this.progressPct = ONE_HUNDRED;
         this.completedAt = Instant.now();
     }
+
+    /** A COMPLETED enrollment goes back to ACTIVE when a lesson is un-completed. */
+    public void reopen(BigDecimal progressPct) {
+        this.status = EnrollmentStatus.ACTIVE;
+        this.progressPct = progressPct;
+        this.completedAt = null;
+    }
 }

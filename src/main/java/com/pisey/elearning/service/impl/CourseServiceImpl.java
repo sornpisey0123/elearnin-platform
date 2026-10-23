@@ -14,13 +14,15 @@ import com.pisey.elearning.entity.enums.CourseStatus;
 import com.pisey.elearning.entity.enums.EnrollmentStatus;
 import com.pisey.elearning.exception.BadRequestException;
 import com.pisey.elearning.exception.ConflictException;
-import com.pisey.elearning.exception.ForbiddenException;
 import com.pisey.elearning.exception.ResourceNotFoundException;
 import com.pisey.elearning.mapper.CourseMapper;
 import com.pisey.elearning.repository.CategoryRepository;
 import com.pisey.elearning.repository.CourseRepository;
 import com.pisey.elearning.repository.EnrollmentRepository;
+import com.pisey.elearning.repository.LessonRepository;
+import com.pisey.elearning.repository.LessonResourceRepository;
 import com.pisey.elearning.repository.projection.CourseContentStats;
+import com.pisey.elearning.service.CourseAccessService;
 import com.pisey.elearning.service.CourseService;
 import com.pisey.elearning.service.CurrentUserService;
 import com.pisey.elearning.service.FileStorageService;
@@ -37,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -59,12 +62,13 @@ public class CourseServiceImpl implements CourseService {
     static final long THUMBNAIL_MAX_BYTES = 5L * 1024 * 1024;
 
     private static final int SLUG_MAX_LENGTH = 220;
-    private static final List<EnrollmentStatus> CONTENT_ACCESS_STATUSES =
-            List.of(EnrollmentStatus.ACTIVE, EnrollmentStatus.COMPLETED);
 
     private final CourseRepository courseRepository;
     private final CategoryRepository categoryRepository;
     private final EnrollmentRepository enrollmentRepository;
+    private final LessonRepository lessonRepository;
+    private final LessonResourceRepository lessonResourceRepository;
+    private final CourseAccessService courseAccessService;
     private final CurrentUserService currentUserService;
     private final FileStorageService fileStorageService;
     private final CourseMapper courseMapper;
@@ -89,7 +93,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseDetailResponse findBySlug(String slug, Jwt caller) {
         Course course = courseRepository.findBySlug(slug)
-                .filter(found -> isVisibleTo(found, caller))
+                .filter(found -> courseAccessService.isVisible(found, caller))
                 .orElseThrow(() -> new ResourceNotFoundException("Course", "slug", slug));
         return toDetail(course);
     }
@@ -202,39 +206,21 @@ public class CourseServiceImpl implements CourseService {
             return true;
         }
 
-        String thumbnailUrl = course.getThumbnailUrl();
+        // Collect every stored file first; the rows (sections, lessons, resources) go with the course
+        List<String> fileUrls = new ArrayList<>();
+        fileUrls.add(course.getThumbnailUrl());
+        fileUrls.addAll(lessonRepository.findFileUrlsByCourseId(id));
+        fileUrls.addAll(lessonResourceRepository.findFileUrlsByCourseId(id));
         courseRepository.delete(course);
-        FileTransactionUtils.deleteAfterCommit(fileStorageService, thumbnailUrl);
+        fileUrls.forEach(url -> FileTransactionUtils.deleteAfterCommit(fileStorageService, url));
         return false;
-    }
-
-    private boolean isVisibleTo(Course course, Jwt caller) {
-        if (course.getStatus() == CourseStatus.PUBLISHED) {
-            return true;
-        }
-        if (caller == null) {
-            return false;
-        }
-        if (isOwnerOrAdmin(course, caller)) {
-            return true;
-        }
-        return course.getStatus() == CourseStatus.ARCHIVED
-                && enrollmentRepository.existsByStudentKeycloakIdAndCourseIdAndStatusIn(
-                SecurityUtils.keycloakId(caller), course.getId(), CONTENT_ACCESS_STATUSES);
     }
 
     private Course getOwnedCourse(Long id, Jwt caller) {
         Course course = courseRepository.findWithInstructorAndCategoryById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course", "id", id));
-        if (!isOwnerOrAdmin(course, caller)) {
-            throw new ForbiddenException("You can only manage your own courses");
-        }
+        courseAccessService.requireOwnerOrAdmin(course, caller);
         return course;
-    }
-
-    private static boolean isOwnerOrAdmin(Course course, Jwt caller) {
-        return SecurityUtils.isAdmin()
-                || course.getInstructor().getKeycloakId().equals(SecurityUtils.keycloakId(caller));
     }
 
     private Category getCategory(Long categoryId) {
