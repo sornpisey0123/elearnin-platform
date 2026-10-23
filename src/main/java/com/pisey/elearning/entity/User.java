@@ -18,6 +18,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,11 +28,20 @@ import lombok.Setter;
 @Entity
 @Table(
         name = "users",
-        uniqueConstraints = @UniqueConstraint(name = "uk_users_email", columnNames = "email"),
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_users_keycloak_id", columnNames = "keycloak_id"),
+                @UniqueConstraint(name = "uk_users_email", columnNames = "email")
+        },
         indexes = @Index(name = "idx_users_role", columnList = "role")
 )
 public class User extends BaseEntity {
 
+    /** Keycloak user id (JWT {@code sub}). */
+    @NotNull
+    @Column(name = "keycloak_id", nullable = false, updatable = false)
+    private UUID keycloakId;
+
+    /** Synced from Keycloak realm roles. */
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "role", length = 30, nullable = false)
@@ -46,11 +57,6 @@ public class User extends BaseEntity {
     @Size(max = 255)
     @Column(name = "email", length = 255, nullable = false)
     private String email;
-
-    @NotBlank
-    @Size(max = 255)
-    @Column(name = "password_hash", length = 255, nullable = false)
-    private String passwordHash;
 
     @Size(max = 500)
     @Column(name = "avatar_url", length = 500)

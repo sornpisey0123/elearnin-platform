@@ -1,0 +1,137 @@
+{
+  "realm": "elearning",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "roles": {
+    "realm": [
+      { "name": "ADMIN", "description": "Platform administrator" },
+      { "name": "INSTRUCTOR", "description": "Creates and manages own courses" },
+      { "name": "STUDENT", "description": "Enrolls in and takes courses" },
+      { "name": "offline_access", "description": "${role_offline-access}" },
+      { "name": "uma_authorization", "description": "${role_uma_authorization}" },
+      {
+        "name": "default-roles-elearning",
+        "description": "Granted to every new user",
+        "composite": true,
+        "composites": {
+          "realm": ["offline_access", "uma_authorization", "STUDENT"]
+        }
+      }
+    ]
+  },
+  "defaultRole": {
+    "name": "default-roles-elearning",
+    "composite": true
+  },
+  "clients": [
+    {
+      "clientId": "elearning-frontend",
+      "name": "E-learning frontend and Swagger UI",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:8989/swagger-ui/oauth2-redirect.html"
+      ],
+      "webOrigins": ["+"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:3000/*"
+      }
+    },
+    {
+      "clientId": "elearning-backend",
+      "name": "E-learning API (Admin REST API service account)",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "elearning-password-check",
+      "name": "Password verification and Postman tokens (dev only)",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": false
+    }
+  ],
+  "users": [
+    {
+      "username": "service-account-elearning-backend",
+      "enabled": true,
+      "serviceAccountClientId": "elearning-backend",
+      "realmRoles": ["default-roles-elearning"],
+      "clientRoles": {
+        "realm-management": ["manage-users", "view-users", "view-realm"]
+      }
+    },
+    {
+      "username": "admin",
+      "email": "admin@elearning.local",
+      "emailVerified": true,
+      "firstName": "Platform",
+      "lastName": "Admin",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "Admin@123", "temporary": false }],
+      "realmRoles": ["default-roles-elearning", "ADMIN"]
+    },
+    {
+      "username": "instructor1",
+      "email": "instructor1@elearning.local",
+      "emailVerified": true,
+      "firstName": "Dara",
+      "lastName": "Chan",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "Instructor@123", "temporary": false }],
+      "realmRoles": ["default-roles-elearning", "INSTRUCTOR"]
+    },
+    {
+      "username": "instructor2",
+      "email": "instructor2@elearning.local",
+      "emailVerified": true,
+      "firstName": "Sophea",
+      "lastName": "Lim",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "Instructor@123", "temporary": false }],
+      "realmRoles": ["default-roles-elearning", "INSTRUCTOR"]
+    },
+    {
+      "username": "student1",
+      "email": "student1@elearning.local",
+      "emailVerified": true,
+      "firstName": "Vanna",
+      "lastName": "Kim",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "Student@123", "temporary": false }],
+      "realmRoles": ["default-roles-elearning"]
+    },
+    {
+      "username": "student2",
+      "email": "student2@elearning.local",
+      "emailVerified": true,
+      "firstName": "Rith",
+      "lastName": "Sok",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "Student@123", "temporary": false }],
+      "realmRoles": ["default-roles-elearning"]
+    }
+  ]
+}
