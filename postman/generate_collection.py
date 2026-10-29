@@ -541,7 +541,7 @@ collection = {
 }
 
 env_values = [
-    ("baseUrl", "http://localhost:8080", "default"),
+    ("baseUrl", "http://localhost:8989", "default"),
     ("keycloakUrl", "http://localhost:8081", "default"),
     ("realm", "elearning", "default"),
     ("tokenClientId", "elearning-password-check", "default"),
