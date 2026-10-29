@@ -118,6 +118,16 @@ Student (enrolled):
   Response includes per-question correctness and correct option ids.
 - `GET /api/quizzes/{id}/attempts/me` — newest first.
 
+Decisions made while building (beyond the spec above):
+- `GET /api/courses/{courseId}/quizzes` (token required, course visibility rules) lists quiz ids in outline
+  order — the outline only has a `hasQuiz` flag, so students need it to find quizzes.
+- Every question needs ≥2 options; a quiz must be worth >0 points in total; `points` defaults to 1;
+  option `correct` is optional (`Boolean`, defaults to false — Jackson 3 rejects a missing primitive).
+- Start attempt returns 201 for a new attempt and 200 with `resumed: true` for the open one.
+- Timed-out submissions store no answers. Unanswered questions store one `attempt_answers` row with null option.
+- Owner/admin can open the student view (preview) but can't start attempts (not enrolled).
+- No migration: the V1 schema already had the quiz tables.
+
 **Check:** student quiz view never exposes answers.
 
 ## Phase 8 — Reviews

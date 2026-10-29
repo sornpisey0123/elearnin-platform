@@ -81,6 +81,11 @@ public class Quiz extends BaseEntity {
         question.setQuiz(null);
     }
 
+    /** The course the quiz belongs to, through its lesson or its section (derived; not a column). */
+    public Course getCourse() {
+        return lesson != null ? lesson.getSection().getCourse() : section.getCourse();
+    }
+
     @PrePersist
     @PreUpdate
     void validateParent() {
