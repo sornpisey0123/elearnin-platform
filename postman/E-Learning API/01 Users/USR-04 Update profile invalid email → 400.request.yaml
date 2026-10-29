@@ -1,0 +1,21 @@
+$kind: http-request
+url: "{{baseUrl}}/api/me"
+method: PUT
+headers:
+  Authorization: Bearer {{studentToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "fullName": "Someone",
+      "email": "not-an-email"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("400 Bad Request", () => pm.response.to.have.status(400));
+      const body = pm.response.json();
+      pm.test("email error", () => pm.expect(body.errors).to.have.property("email"));
+    language: text/javascript
+order: 4000

@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/admin/users/999999999/role"
+method: PATCH
+headers:
+  Authorization: Bearer {{adminToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "role": "STUDENT"
+    }
+scripts:
+  - type: afterResponse
+    code: pm.test("404 Not Found", () => pm.response.to.have.status(404));
+    language: text/javascript
+order: 12000

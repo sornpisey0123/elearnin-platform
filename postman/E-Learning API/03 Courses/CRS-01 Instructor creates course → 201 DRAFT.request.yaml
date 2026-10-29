@@ -1,0 +1,27 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/courses"
+method: POST
+headers:
+  Authorization: Bearer {{instructorToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Postman Course {{runId}}",
+      "description": "Created by the Postman collection",
+      "categoryId": {{categoryId}},
+      "level": "BEGINNER",
+      "price": 49.99
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("201 Created", () => pm.response.to.have.status(201));
+      const body = pm.response.json();
+      pm.test("status DRAFT", () => pm.expect(body.status).to.eql("DRAFT"));
+      pm.test("instructor is caller", () => pm.expect(body.instructor.id).to.eql(Number(pm.environment.get("instructorUserId"))));
+      pm.environment.set("courseId", body.id);
+      pm.environment.set("courseSlug", body.slug);
+    language: text/javascript
+order: 1000

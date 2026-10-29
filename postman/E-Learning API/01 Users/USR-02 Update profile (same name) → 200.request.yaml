@@ -1,0 +1,21 @@
+$kind: http-request
+url: "{{baseUrl}}/api/me"
+method: PUT
+headers:
+  Authorization: Bearer {{studentToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "fullName": "{{studentFullName}}",
+      "bio": "Bio set by Postman {{runId}}"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("bio updated", () => pm.expect(body.bio).to.eql("Bio set by Postman " + pm.environment.get("runId")));
+    language: text/javascript
+order: 2000

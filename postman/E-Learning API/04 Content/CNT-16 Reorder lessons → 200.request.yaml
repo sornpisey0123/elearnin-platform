@@ -1,0 +1,23 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/sections/{{sectionId}}/lessons/order"
+method: PUT
+headers:
+  Authorization: Bearer {{instructorToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "lessonIds": [
+        {{lessonId2}},
+        {{lessonId}}
+      ]
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("new order", () => pm.expect(body.map(l => l.id)).to.eql([Number(pm.environment.get("lessonId2")), Number(pm.environment.get("lessonId"))]));
+    language: text/javascript
+order: 16000

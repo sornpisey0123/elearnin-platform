@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{baseUrl}}/api/me/courses?status=bogus"
+method: GET
+headers:
+  Authorization: Bearer {{studentToken}}
+scripts:
+  - type: afterResponse
+    code: pm.test("400 Bad Request", () => pm.response.to.have.status(400));
+    language: text/javascript
+order: 23000

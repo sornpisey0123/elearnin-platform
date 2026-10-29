@@ -1,0 +1,22 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/sections/{{sectionId2}}/lessons"
+method: POST
+headers:
+  Authorization: Bearer {{instructorToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Deep dive",
+      "type": "TEXT",
+      "body": "More content."
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("201 Created", () => pm.response.to.have.status(201));
+      const body = pm.response.json();
+      pm.environment.set("lessonId3", body.id);
+    language: text/javascript
+order: 9000

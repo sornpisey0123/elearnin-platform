@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{baseUrl}}/api/courses/{{courseId}}/outline"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("2 sections", () => pm.expect(body.sections.length).to.eql(2));
+      const lessons = body.sections.flatMap(s => s.lessons);
+      pm.test("3 lessons", () => pm.expect(lessons.length).to.eql(3));
+      pm.test("no content fields", () => lessons.forEach(l => pm.expect(l).to.not.have.any.keys("videoUrl", "body", "fileUrl")));
+    language: text/javascript
+order: 22000

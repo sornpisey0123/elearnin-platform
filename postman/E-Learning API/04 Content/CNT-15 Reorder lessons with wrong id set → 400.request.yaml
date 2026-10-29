@@ -1,0 +1,19 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/sections/{{sectionId}}/lessons/order"
+method: PUT
+headers:
+  Authorization: Bearer {{instructorToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "lessonIds": [
+        {{lessonId}}
+      ]
+    }
+scripts:
+  - type: afterResponse
+    code: pm.test("400 Bad Request", () => pm.response.to.have.status(400));
+    language: text/javascript
+order: 15000

@@ -1,0 +1,25 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/courses/{{courseId}}"
+method: PUT
+headers:
+  Authorization: Bearer {{instructorToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Postman Course {{runId}}",
+      "description": "Created by the Postman collection",
+      "categoryId": {{categoryId}},
+      "level": "INTERMEDIATE",
+      "price": 59.99
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("level updated", () => pm.expect(body.level).to.eql("INTERMEDIATE"));
+      pm.test("price updated", () => pm.expect(Number(body.price)).to.eql(59.99));
+    language: text/javascript
+order: 7000

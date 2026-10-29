@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/courses/{{courseId}}/publish"
+method: POST
+headers:
+  Authorization: Bearer {{instructorToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("status PUBLISHED", () => pm.expect(body.status).to.eql("PUBLISHED"));
+      pm.test("publishedAt set", () => pm.expect(body.publishedAt).to.be.a("string"));
+      pm.test("3 lessons", () => pm.expect(body.lessonCount).to.eql(3));
+      pm.environment.set("courseSlug", body.slug);
+    language: text/javascript
+order: 21000

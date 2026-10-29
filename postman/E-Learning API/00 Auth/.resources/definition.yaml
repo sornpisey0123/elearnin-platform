@@ -1,0 +1,3 @@
+$kind: collection
+description: Password-grant tokens for every role, then /api/me to provision the local users.
+order: 1000

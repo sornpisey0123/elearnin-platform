@@ -1,0 +1,20 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/courses/{{courseId}}/sections"
+method: POST
+headers:
+  Authorization: Bearer {{instructorToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "To be deleted"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("201 Created", () => pm.response.to.have.status(201));
+      const body = pm.response.json();
+      pm.environment.set("tempSectionId", body.id);
+    language: text/javascript
+order: 19000

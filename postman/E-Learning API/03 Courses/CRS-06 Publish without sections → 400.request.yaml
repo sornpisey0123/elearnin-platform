@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/courses/{{courseId}}/publish"
+method: POST
+headers:
+  Authorization: Bearer {{instructorToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("400 Bad Request", () => pm.response.to.have.status(400));
+      const body = pm.response.json();
+      pm.test("mentions section", () => pm.expect(body.detail).to.include("section"));
+    language: text/javascript
+order: 6000

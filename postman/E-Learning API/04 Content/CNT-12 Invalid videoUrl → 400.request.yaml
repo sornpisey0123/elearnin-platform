@@ -1,0 +1,20 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/sections/{{sectionId}}/lessons"
+method: POST
+headers:
+  Authorization: Bearer {{instructorToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Broken",
+      "type": "VIDEO",
+      "videoUrl": "ftp://nope",
+      "durationSeconds": 10
+    }
+scripts:
+  - type: afterResponse
+    code: pm.test("400 Bad Request", () => pm.response.to.have.status(400));
+    language: text/javascript
+order: 12000

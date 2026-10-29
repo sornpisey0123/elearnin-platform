@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/lessons/{{lessonId2}}"
+method: GET
+headers:
+  Authorization: Bearer {{studentToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("body present", () => pm.expect(body.body).to.include("Notes"));
+    language: text/javascript
+order: 24000

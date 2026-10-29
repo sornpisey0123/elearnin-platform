@@ -1,0 +1,21 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/courses/{{courseId}}/sections"
+method: POST
+headers:
+  Authorization: Bearer {{instructorToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Getting started"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("201 Created", () => pm.response.to.have.status(201));
+      const body = pm.response.json();
+      pm.test("sortOrder 1", () => pm.expect(body.sortOrder).to.eql(1));
+      pm.environment.set("sectionId", body.id);
+    language: text/javascript
+order: 1000

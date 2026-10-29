@@ -1,0 +1,14 @@
+$kind: http-request
+name: ENR-22 My courses ?status=in-progress excludes it
+url: "{{baseUrl}}/api/me/courses?status=in-progress"
+method: GET
+headers:
+  Authorization: Bearer {{studentToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("course absent", () => pm.expect(body.content.map(r => r.course.id)).to.not.include(Number(pm.environment.get("courseId"))));
+    language: text/javascript
+order: 22000

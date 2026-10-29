@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/courses/{{courseId}}/sections"
+method: POST
+headers:
+  Authorization: Bearer {{instructor2Token}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Hijack"
+    }
+scripts:
+  - type: afterResponse
+    code: pm.test("403 Forbidden", () => pm.response.to.have.status(403));
+    language: text/javascript
+order: 5000

@@ -1,0 +1,11 @@
+$kind: http-request
+url: "{{baseUrl}}/api/courses?categoryId={{categoryId}}&level=INTERMEDIATE"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("exactly the course", () => pm.expect(body.content.map(c => c.id)).to.eql([Number(pm.environment.get("courseId"))]));
+    language: text/javascript
+order: 2000

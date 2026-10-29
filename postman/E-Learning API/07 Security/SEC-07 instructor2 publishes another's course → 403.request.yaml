@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/courses/{{draftCourseId}}/publish"
+method: POST
+headers:
+  Authorization: Bearer {{instructor2Token}}
+scripts:
+  - type: afterResponse
+    code: pm.test("403 Forbidden", () => pm.response.to.have.status(403));
+    language: text/javascript
+order: 6000

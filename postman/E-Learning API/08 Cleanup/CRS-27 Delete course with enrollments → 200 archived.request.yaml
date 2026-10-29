@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/courses/{{courseId}}"
+method: DELETE
+headers:
+  Authorization: Bearer {{instructorToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("archived true", () => pm.expect(body.archived).to.eql(true));
+    language: text/javascript
+order: 3000

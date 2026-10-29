@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/courses?size=100"
+method: GET
+headers:
+  Authorization: Bearer {{instructorToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      const ids = body.content.map(c => c.id);
+      pm.test("contains both courses", () => pm.expect(ids).to.include.members([Number(pm.environment.get("courseId")), Number(pm.environment.get("draftCourseId"))]));
+    language: text/javascript
+order: 10000

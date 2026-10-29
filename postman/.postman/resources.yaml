@@ -1,0 +1,10 @@
+# Use this workspace to collaborate
+workspace:
+  id: 1fb4628a-6ecf-4031-8c98-cfed2ceb3792
+
+localResources:
+  collections:
+    - ../elearning.postman_collection.json
+    - ../E-Learning API
+  environments:
+    - ../E-Learning Local.environment.yaml

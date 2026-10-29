@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{baseUrl}}/api/me"
+method: GET
+headers:
+  Authorization: Bearer {{studentToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("has email", () => pm.expect(body.email).to.be.a("string"));
+      pm.environment.set("studentFullName", body.fullName);
+    language: text/javascript
+order: 1000

@@ -1,0 +1,11 @@
+$kind: http-request
+url: "{{baseUrl}}/api/me"
+method: GET
+scripts:
+  - type: beforeRequest
+    code: 'pm.request.headers.upsert({key: "Authorization", value: "Bearer not-a-real-token"});'
+    language: text/javascript
+  - type: afterResponse
+    code: pm.test("401 Unauthorized", () => pm.response.to.have.status(401));
+    language: text/javascript
+order: 10000

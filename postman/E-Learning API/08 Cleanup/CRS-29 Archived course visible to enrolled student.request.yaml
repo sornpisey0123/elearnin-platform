@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/courses/{{courseSlug}}"
+method: GET
+headers:
+  Authorization: Bearer {{studentToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("ARCHIVED", () => pm.expect(body.status).to.eql("ARCHIVED"));
+    language: text/javascript
+order: 5000

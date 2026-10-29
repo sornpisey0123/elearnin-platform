@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/admin/users?role=INSTRUCTOR"
+method: GET
+headers:
+  Authorization: Bearer {{adminToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("only instructors", () => body.content.forEach(u => pm.expect(u.role).to.eql("INSTRUCTOR")));
+    language: text/javascript
+order: 7000

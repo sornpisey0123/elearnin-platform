@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{keycloakUrl}}/realms/{{realm}}"
+method: GET
+scripts:
+  - type: beforeRequest
+    code: |-
+      // One id per run so names stay unique across reruns
+      pm.environment.set("runId", String(Date.now()));
+    language: text/javascript
+  - type: afterResponse
+    code: pm.test("Keycloak realm reachable", () => pm.response.to.have.status(200));
+    language: text/javascript
+order: 1000

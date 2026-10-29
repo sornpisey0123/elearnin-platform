@@ -1,0 +1,24 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/lessons/{{lessonId}}"
+method: PUT
+headers:
+  Authorization: Bearer {{instructorToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Welcome video (updated)",
+      "type": "VIDEO",
+      "videoUrl": "https://example.com/welcome.mp4",
+      "durationSeconds": 360,
+      "preview": false
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("duration updated", () => pm.expect(body.durationSeconds).to.eql(360));
+    language: text/javascript
+order: 14000

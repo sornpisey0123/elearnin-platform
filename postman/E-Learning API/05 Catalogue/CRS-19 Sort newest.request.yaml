@@ -1,0 +1,11 @@
+$kind: http-request
+url: "{{baseUrl}}/api/courses?sort=newest&size=50"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("paged response", () => pm.expect(body).to.include.keys("content", "page", "size", "totalElements", "totalPages"));
+    language: text/javascript
+order: 4000

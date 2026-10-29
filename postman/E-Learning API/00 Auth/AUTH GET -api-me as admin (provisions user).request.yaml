@@ -1,0 +1,15 @@
+$kind: http-request
+name: AUTH GET /api/me as admin (provisions user)
+url: "{{baseUrl}}/api/me"
+method: GET
+headers:
+  Authorization: Bearer {{adminToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("role is ADMIN", () => pm.expect(body.role).to.eql("ADMIN"));
+      pm.environment.set("adminUserId", body.id);
+    language: text/javascript
+order: 7000

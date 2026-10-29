@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{baseUrl}}/api/me/lessons/{{lessonId3}}/complete"
+method: DELETE
+headers:
+  Authorization: Bearer {{studentToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("lesson not completed", () => pm.expect(body.lessonCompleted).to.eql(false));
+      pm.test("ACTIVE", () => pm.expect(body.enrollmentStatus).to.eql("ACTIVE"));
+    language: text/javascript
+order: 15000

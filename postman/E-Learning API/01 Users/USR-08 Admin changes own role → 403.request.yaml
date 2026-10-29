@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/admin/users/{{adminUserId}}/role"
+method: PATCH
+headers:
+  Authorization: Bearer {{adminToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "role": "STUDENT"
+    }
+scripts:
+  - type: afterResponse
+    code: pm.test("403 Forbidden", () => pm.response.to.have.status(403));
+    language: text/javascript
+order: 8000

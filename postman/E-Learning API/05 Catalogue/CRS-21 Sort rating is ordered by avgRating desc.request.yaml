@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{baseUrl}}/api/courses?sort=rating&size=50"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      const ratings = body.content.map(c => Number(c.avgRating || 0));
+      pm.test("descending", () => pm.expect(ratings).to.eql([...ratings].sort((a, b) => b - a)));
+    language: text/javascript
+order: 6000

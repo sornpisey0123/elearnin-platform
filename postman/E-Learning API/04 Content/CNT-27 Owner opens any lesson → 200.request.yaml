@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/lessons/{{lessonId}}"
+method: GET
+headers:
+  Authorization: Bearer {{instructorToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("videoUrl present", () => pm.expect(body.videoUrl).to.eql("https://example.com/welcome.mp4"));
+    language: text/javascript
+order: 27000

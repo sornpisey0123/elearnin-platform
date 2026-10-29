@@ -1,0 +1,14 @@
+$kind: http-request
+name: ENR-21 My courses ?status=completed
+url: "{{baseUrl}}/api/me/courses?status=completed"
+method: GET
+headers:
+  Authorization: Bearer {{studentToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("all completed", () => body.content.forEach(r => pm.expect(r.status).to.eql("COMPLETED")));
+    language: text/javascript
+order: 21000

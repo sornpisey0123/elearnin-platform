@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/me/debug-token"
+method: GET
+headers:
+  Authorization: Bearer {{studentToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("contains STUDENT", () => pm.expect(JSON.stringify(body)).to.include("STUDENT"));
+    language: text/javascript
+order: 12000

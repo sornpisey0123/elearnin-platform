@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/courses?size=100"
+method: GET
+headers:
+  Authorization: Bearer {{instructor2Token}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("course absent", () => pm.expect(body.content.map(c => c.id)).to.not.include(Number(pm.environment.get("courseId"))));
+    language: text/javascript
+order: 11000

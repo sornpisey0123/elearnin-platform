@@ -1,0 +1,82 @@
+name: E-Learning Local
+values:
+  - key: baseUrl
+    value: 'http://localhost:8080'
+  - key: keycloakUrl
+    value: 'http://localhost:8081'
+  - key: realm
+    value: elearning
+  - key: tokenClientId
+    value: elearning-password-check
+  - key: adminUsername
+    value: admin
+  - key: adminPassword
+    value: Admin@123
+  - key: instructorUsername
+    value: instructor1
+  - key: instructorPassword
+    value: Instructor@123
+  - key: instructor2Username
+    value: instructor2
+  - key: instructor2Password
+    value: Instructor@123
+  - key: studentUsername
+    value: student1
+  - key: studentPassword
+    value: Student@123
+  - key: student2Username
+    value: student2
+  - key: student2Password
+    value: Student@123
+  - key: runId
+    value: ''
+  - key: adminToken
+    value: ''
+  - key: instructorToken
+    value: ''
+  - key: instructor2Token
+    value: ''
+  - key: studentToken
+    value: ''
+  - key: student2Token
+    value: ''
+  - key: adminUserId
+    value: ''
+  - key: instructorUserId
+    value: ''
+  - key: instructor2UserId
+    value: ''
+  - key: studentUserId
+    value: ''
+  - key: student2UserId
+    value: ''
+  - key: studentFullName
+    value: ''
+  - key: categoryId
+    value: ''
+  - key: categorySlug
+    value: ''
+  - key: tempCategoryId
+    value: ''
+  - key: courseId
+    value: ''
+  - key: courseSlug
+    value: ''
+  - key: draftCourseId
+    value: ''
+  - key: draftCourseSlug
+    value: ''
+  - key: sectionId
+    value: ''
+  - key: sectionId2
+    value: ''
+  - key: tempSectionId
+    value: ''
+  - key: lessonId
+    value: ''
+  - key: lessonId2
+    value: ''
+  - key: lessonId3
+    value: ''
+  - key: enrollmentId
+    value: ''

@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/courses/{{draftCourseId}}"
+method: DELETE
+headers:
+  Authorization: Bearer {{instructorToken}}
+scripts:
+  - type: afterResponse
+    code: pm.test("204 No Content", () => pm.response.to.have.status(204));
+    language: text/javascript
+order: 1000

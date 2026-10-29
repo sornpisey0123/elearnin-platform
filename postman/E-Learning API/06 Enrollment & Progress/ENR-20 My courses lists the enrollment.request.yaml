@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{baseUrl}}/api/me/courses"
+method: GET
+headers:
+  Authorization: Bearer {{studentToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      const row = body.content.find(r => r.course.id === Number(pm.environment.get("courseId")));
+      pm.test("enrollment listed", () => pm.expect(row).to.be.an("object"));
+      pm.test("COMPLETED 100", () => { pm.expect(row.status).to.eql("COMPLETED"); pm.expect(Number(row.progressPct)).to.eql(100); });
+    language: text/javascript
+order: 20000

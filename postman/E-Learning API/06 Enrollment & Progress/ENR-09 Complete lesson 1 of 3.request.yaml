@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{baseUrl}}/api/me/lessons/{{lessonId2}}/complete"
+method: POST
+headers:
+  Authorization: Bearer {{studentToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("lesson completed", () => pm.expect(body.lessonCompleted).to.eql(true));
+      pm.test("1 of 3", () => { pm.expect(body.completedLessons).to.eql(1); pm.expect(body.totalLessons).to.eql(3); });
+      pm.test("still ACTIVE", () => pm.expect(body.enrollmentStatus).to.eql("ACTIVE"));
+    language: text/javascript
+order: 9000

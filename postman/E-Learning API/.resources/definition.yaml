@@ -1,0 +1,2 @@
+$kind: collection
+description: End-to-end test run for the e-learning backend (Phases 1–6). Run folders in order on a fresh database with Keycloak up. Tokens come from the password grant on elearning-password-check (dev/test only).

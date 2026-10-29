@@ -1,0 +1,24 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/sections/{{sectionId}}/lessons"
+method: POST
+headers:
+  Authorization: Bearer {{instructorToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Course notes",
+      "type": "TEXT",
+      "body": "# Notes\nRead me first.",
+      "preview": true
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("201 Created", () => pm.response.to.have.status(201));
+      const body = pm.response.json();
+      pm.test("preview true", () => pm.expect(body.preview).to.eql(true));
+      pm.environment.set("lessonId2", body.id);
+    language: text/javascript
+order: 8000

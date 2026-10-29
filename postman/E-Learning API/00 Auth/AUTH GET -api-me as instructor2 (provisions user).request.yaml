@@ -1,0 +1,15 @@
+$kind: http-request
+name: AUTH GET /api/me as instructor2 (provisions user)
+url: "{{baseUrl}}/api/me"
+method: GET
+headers:
+  Authorization: Bearer {{instructor2Token}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("role is INSTRUCTOR", () => pm.expect(body.role).to.eql("INSTRUCTOR"));
+      pm.environment.set("instructor2UserId", body.id);
+    language: text/javascript
+order: 9000

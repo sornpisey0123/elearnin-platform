@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{baseUrl}}/api/courses/{{courseId}}/enroll"
+method: POST
+headers:
+  Authorization: Bearer {{studentToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("201 Created", () => pm.response.to.have.status(201));
+      const body = pm.response.json();
+      pm.test("ACTIVE", () => pm.expect(body.status).to.eql("ACTIVE"));
+      pm.test("pricePaid = current price", () => pm.expect(Number(body.pricePaid)).to.eql(59.99));
+      pm.test("progress 0", () => pm.expect(Number(body.progressPct)).to.eql(0));
+      pm.environment.set("enrollmentId", body.id);
+    language: text/javascript
+order: 1000

@@ -1,0 +1,25 @@
+$kind: http-request
+url: "{{baseUrl}}/api/admin/categories"
+method: POST
+headers:
+  Authorization: Bearer {{adminToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Postman Cat {{runId}}",
+      "description": "Test category"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("201 Created", () => pm.response.to.have.status(201));
+      const body = pm.response.json();
+      pm.test("has id", () => pm.expect(body.id).to.be.a("number"));
+      pm.test("slug generated", () => pm.expect(body.slug).to.eql("postman-cat-" + pm.environment.get("runId")));
+      pm.test("courseCount 0", () => pm.expect(body.courseCount).to.eql(0));
+      pm.environment.set("categoryId", body.id);
+      pm.environment.set("categorySlug", body.slug);
+    language: text/javascript
+order: 2000

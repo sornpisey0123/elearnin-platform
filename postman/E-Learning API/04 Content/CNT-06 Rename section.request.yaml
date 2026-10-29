@@ -1,0 +1,20 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/sections/{{sectionId}}"
+method: PUT
+headers:
+  Authorization: Bearer {{instructorToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Introduction"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("renamed", () => pm.expect(body.title).to.eql("Introduction"));
+    language: text/javascript
+order: 6000

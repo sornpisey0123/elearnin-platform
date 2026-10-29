@@ -1,0 +1,24 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/courses/{{courseId}}"
+method: PUT
+headers:
+  Authorization: Bearer {{adminToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Postman Course {{runId}}",
+      "description": "Created by the Postman collection",
+      "categoryId": {{categoryId}},
+      "level": "INTERMEDIATE",
+      "price": 59.99
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("same id", () => pm.expect(body.id).to.eql(Number(pm.environment.get("courseId"))));
+    language: text/javascript
+order: 8000

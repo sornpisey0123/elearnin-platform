@@ -1,0 +1,25 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/courses"
+method: POST
+headers:
+  Authorization: Bearer {{instructorToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Postman Draft {{runId}}",
+      "description": "Created by the Postman collection",
+      "categoryId": {{categoryId}},
+      "level": "BEGINNER",
+      "price": 49.99
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("201 Created", () => pm.response.to.have.status(201));
+      const body = pm.response.json();
+      pm.environment.set("draftCourseId", body.id);
+      pm.environment.set("draftCourseSlug", body.slug);
+    language: text/javascript
+order: 2000

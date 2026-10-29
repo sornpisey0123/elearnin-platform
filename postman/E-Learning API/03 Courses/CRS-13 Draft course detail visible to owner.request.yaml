@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/courses/{{courseSlug}}"
+method: GET
+headers:
+  Authorization: Bearer {{instructorToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("200 OK", () => pm.response.to.have.status(200));
+      const body = pm.response.json();
+      pm.test("status DRAFT", () => pm.expect(body.status).to.eql("DRAFT"));
+    language: text/javascript
+order: 13000

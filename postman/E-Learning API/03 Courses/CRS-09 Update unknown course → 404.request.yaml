@@ -1,0 +1,21 @@
+$kind: http-request
+url: "{{baseUrl}}/api/instructor/courses/999999999"
+method: PUT
+headers:
+  Authorization: Bearer {{instructorToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Ghost {{runId}}",
+      "description": "Created by the Postman collection",
+      "categoryId": {{categoryId}},
+      "level": "BEGINNER",
+      "price": 49.99
+    }
+scripts:
+  - type: afterResponse
+    code: pm.test("404 Not Found", () => pm.response.to.have.status(404));
+    language: text/javascript
+order: 9000
