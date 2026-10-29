@@ -16,6 +16,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     boolean existsByCourseIdAndStudentId(Long courseId, Long studentId);
 
+    /** Average of every review on the instructor's courses; null without reviews. */
+    @Query("select avg(r.rating) from Review r where r.course.instructor.keycloakId = :instructorKeycloakId")
+    Double findAverageRatingByInstructor(@Param("instructorKeycloakId") UUID instructorKeycloakId);
+
     /** Fetches each author with the page so the list doesn't query per review. */
     @EntityGraph(attributePaths = "student")
     Page<Review> findByCourseId(Long courseId, Pageable pageable);

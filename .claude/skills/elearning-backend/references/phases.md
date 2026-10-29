@@ -171,4 +171,16 @@ Instructor (own courses):
   `date_trunc('month', enrolled_at)` in UTC; zero-fill empty months; oldest → newest;
   label `YYYY-MM`.
 
+Decisions made while building:
+- Zero-filling the trend is done in SQL with `generate_series` over UTC months; each month is matched as an
+  `enrolled_at` range (not `date_trunc(enrolled_at)`) so the `(course_id, enrolled_at)` index is used.
+  Each point also has the month's revenue. The window ends at the current UTC month (DB clock).
+- Revenue and enrollment counts include every enrollment status (nothing cancels enrollments yet).
+- Top courses rank PUBLISHED and ARCHIVED courses only (drafts can't have enrollments or reviews), from the cached
+  counters; ties break by review count (rating) and id. `by` is case-insensitive; unknown → 400.
+  `limit` 1–50 and `months` 1–24 are validated on the parameters (400 outside).
+- Instructor report: every own course in any status, newest first; totals add up the rows, and the total
+  avgRating averages every review across the courses (weighted by review count).
+- Money values always have 2 decimals. No migration: reports only read existing tables.
+
 **Check:** months with no enrollments show 0.
