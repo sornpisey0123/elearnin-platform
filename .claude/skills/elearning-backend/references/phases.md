@@ -143,6 +143,15 @@ Decisions made while building (beyond the spec above):
 After every write, recompute avgRating (2 dp) and reviewCount with one aggregate query in the
 same transaction.
 
+Decisions made while building:
+- The recalculation is one native PostgreSQL `UPDATE … FROM (SELECT round(avg), count)` in
+  `ReviewRepository.recalculateCourseRating`; it does not touch `courses.updated_at` (like the enrollment counter).
+- Reviews of a course the caller can't see → 404 (list and create), so drafts aren't revealed.
+- POST needs the STUDENT role (`@PreAuthorize`) and an ACTIVE/COMPLETED enrollment; PUT is author-only, even
+  for ADMIN; DELETE is author or ADMIN.
+- Blank comments are stored as null; comments are trimmed. The list is paged, default sort `createdAt` desc.
+- No migration: the V1 schema already had `reviews` and the cached course columns.
+
 **Check:** avgRating updates after create/delete.
 
 ## Phase 9 — Reports
